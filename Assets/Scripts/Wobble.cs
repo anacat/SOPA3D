@@ -18,6 +18,8 @@ public class Wobble : MonoBehaviour
     float wobbleAmountToAddZ;
     float pulse;
     float time = 0.5f;
+
+    public SpillController spillController;
    
     // Use this for initialization
     void Start()
@@ -47,8 +49,7 @@ public class Wobble : MonoBehaviour
         // velocity
         velocity = (lastPos - transform.position) / Time.deltaTime;
         angularVelocity = transform.rotation.eulerAngles - lastRot;
- 
- 
+
         // add clamped velocity to wobble
         wobbleAmountToAddX += Mathf.Clamp((velocity.x + (angularVelocity.z * 0.2f)) * MaxWobble, -MaxWobble, MaxWobble);
         wobbleAmountToAddZ += Mathf.Clamp((velocity.z + (angularVelocity.x * 0.2f)) * MaxWobble, -MaxWobble, MaxWobble);
@@ -56,6 +57,9 @@ public class Wobble : MonoBehaviour
         // keep last position
         lastPos = transform.position;
         lastRot = transform.rotation.eulerAngles;
+
+        //check if spilled
+        spillController.CheckForSpill(velocity, lastRot);
     }
  
  
