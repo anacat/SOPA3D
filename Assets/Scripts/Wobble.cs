@@ -59,7 +59,7 @@ public class Wobble : MonoBehaviour
         lastRot = transform.rotation.eulerAngles;
 
         //check if spilled
-        spillController.CheckForSpill(velocity, lastRot);
+        spillController.CheckForSpill(wobbleAmountX, wobbleAmountZ);
     }
  
  

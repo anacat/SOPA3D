@@ -4,43 +4,41 @@ using UnityEngine;
 
 public class SpillController : MonoBehaviour
 {
+    public Transform parent;
     ParticleSystem ps;
-    Vector3 psStartPosition;
-    public Transform bowl;
+    Vector3 startPosition;
     bool spilled;
     private void Start()
     {
         ps = GetComponent<ParticleSystem>();
-        psStartPosition = ps.transform.localPosition;
+        startPosition = transform.localPosition;
     }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
             //ps.Play();
-            StartCoroutine(StartSpilling());
+            //StartCoroutine(StartSpilling());
         }
     }
 
-    public void CheckForSpill(Vector3 velocity, Vector3 rot)
+    public void CheckForSpill(float wobbleAmountX, float wobbleAmountZ)
     {
         if (spilled)
         {
             return;
         }
-        Vector3 dir = velocity;// new Vector3(dirX, 0, dirZ);
+        Vector3 dir = new Vector3(wobbleAmountX, 0, wobbleAmountZ);
         if (dir.magnitude > 1)
         {
-            //print($"dir.normalized = {dir.normalized}");
-            //print($"bowl.position = {bowl.}");
-            
-           // print($"ps.transform.localPosition = {ps.transform.localPosition}");
             spilled = true;
-            ps.transform.SetParent(null);
-            print($"ps.transform.forward = {ps.transform.forward}");
-            ps.transform.rotation.SetFromToRotation(ps.transform.forward, dir.normalized);
-            ps.transform.position -= dir.normalized;
-          //  print($"ps.transform.localPosition = {ps.transform.localPosition}");
+
+            float angle = Vector3.Angle(transform.forward, -dir);
+
+            transform.localRotation = Quaternion.Euler(angle, 0, 0);
+            transform.SetParent(null);
+            transform.position -= dir.normalized;
+
             StartCoroutine(StartSpilling());
         }
     }
@@ -48,6 +46,7 @@ public class SpillController : MonoBehaviour
     IEnumerator StartSpilling()
     {
         ps.Play();
+        //can only play again after last particle as faded
         float time = ps.duration + ps.startLifetime - 0.01f;
         float elapsedTime = 0;
         while (elapsedTime < time)
@@ -55,9 +54,9 @@ public class SpillController : MonoBehaviour
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        ps.transform.SetParent(bowl);
-        ps.transform.localPosition = psStartPosition;
-        ps.transform.localRotation = Quaternion.identity;
+        transform.SetParent(parent);
+        transform.localPosition = startPosition;
+        transform.localRotation = Quaternion.identity;
         spilled = false;
     }
 
