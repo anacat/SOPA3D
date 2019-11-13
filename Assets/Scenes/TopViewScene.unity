@@ -138,6 +138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70ac6ebe1d97af248a2a8f761dc949f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  parent: {fileID: 1754592778}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -281,8 +282,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -405,6 +406,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 29395549305988973, guid: cfbcfa530ca3c8144942aa801e271a1f,
+        type: 3}
+      propertyPath: spillController
+      value: 
+      objectReference: {fileID: 246213562}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cfbcfa530ca3c8144942aa801e271a1f, type: 3}
 --- !u!1001 &9138928056547335501
@@ -427,12 +433,12 @@ PrefabInstance:
     - target: {fileID: 9138928056591070961, guid: 554f9c9277fbad4458d45d9beda431b1,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9138928056591070961, guid: 554f9c9277fbad4458d45d9beda431b1,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.7
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9138928056591070961, guid: 554f9c9277fbad4458d45d9beda431b1,
         type: 3}
