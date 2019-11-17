@@ -5,13 +5,21 @@ using UnityEngine;
 public class SpillController : MonoBehaviour
 {
     public Transform parent;
-    ParticleSystem ps;
+    public Transform spillPool;
+    public ParticleSystem psPrefab;
+    public int maxSpills;
+    List<ParticleSystem> idleSpills;
     Vector3 startPosition;
     bool spilled;
     private void Start()
     {
-        ps = GetComponent<ParticleSystem>();
         startPosition = transform.localPosition;
+
+        idleSpills = new List<ParticleSystem>();
+        for (int i = 0; i < maxSpills; i++)
+        {
+            idleSpills.Add(Instantiate(psPrefab, parent));
+        }
     }
     void Update()
     {
@@ -24,40 +32,52 @@ public class SpillController : MonoBehaviour
 
     public void CheckForSpill(float wobbleAmountX, float wobbleAmountZ)
     {
-        if (spilled)
+        if (spilled || idleSpills.Count < 1)
         {
             return;
         }
         Vector3 dir = new Vector3(wobbleAmountX, 0, wobbleAmountZ);
-        if (dir.magnitude > 1)
+        if (dir.magnitude > 0.25f)
         {
             spilled = true;
 
             float angle = Vector3.Angle(transform.forward, -dir);
 
-            transform.localRotation = Quaternion.Euler(angle, 0, 0);
-            transform.SetParent(null);
-            transform.position -= dir.normalized;
+            ParticleSystem ps = idleSpills[0];
+            idleSpills.Remove(ps);
 
-            StartCoroutine(StartSpilling());
+            ps.transform.localRotation = Quaternion.Euler(angle, 0, 0);
+            ps.transform.SetParent(null);
+            ps.transform.position -= dir.normalized;
+
+            StartCoroutine(StartSpilling(ps));
         }
     }
 
-    IEnumerator StartSpilling()
+    IEnumerator StartSpilling(ParticleSystem ps)
     {
         ps.Play();
-        //can only play again after last particle as faded
-        float time = ps.duration + ps.startLifetime - 0.01f;
+
+        float time = ps.duration - 0.005f;
         float elapsedTime = 0;
+        //coldown before next spill
         while (elapsedTime < time)
         {
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        transform.SetParent(parent);
-        transform.localPosition = startPosition;
-        transform.localRotation = Quaternion.identity;
         spilled = false;
+        elapsedTime = 0;
+        time = ps.startLifetime - 0.005f;
+        while (elapsedTime < time)
+        {
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        ps.transform.SetParent(parent);
+        ps.transform.localPosition = startPosition;
+        ps.transform.localRotation = Quaternion.identity;
+        idleSpills.Add(ps);
     }
 
 }
