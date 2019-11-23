@@ -3,7 +3,6 @@
     Properties
     {
         _Tint ("Tint", Color) = (1,1,1,1)
-        _MainTex ("Texture", 2D) = "white" {}
         _FillAmount ("Fill Amount", Range(-10,10)) = 0.0
         [HideInInspector] _WobbleX ("WobbleX", Range(-1,1)) = 0.0
         [HideInInspector] _WobbleZ ("WobbleZ", Range(-1,1)) = 0.0
@@ -18,14 +17,13 @@
     {
         Tags {"Queue"="Geometry"  "DisableBatching" = "True" }
  
-                Pass
+        Pass
         {
          Zwrite On
          Cull Off // we want the front and back faces
          AlphaToMask On // transparency
  
-         CGPROGRAM
- 
+         CGPROGRAM 
  
          #pragma vertex vert
          #pragma fragment frag
@@ -51,8 +49,6 @@
             float fillEdge : TEXCOORD2;
          };
  
-         sampler2D _MainTex;
-         float4 _MainTex_ST;
          float _FillAmount, _WobbleX, _WobbleZ;
          float4 _TopColor, _RimColor, _FoamColor, _Tint;
          float _Rim, _RimPower;
@@ -64,15 +60,14 @@
             sincos(alpha, sina, cosa);
             float2x2 m = float2x2(cosa, sina, -sina, cosa);
             return float4(vertex.yz , mul(m, vertex.xz)).xzyw ;            
-         }
-     
+         }     
  
          v2f vert (appdata v)
          {
             v2f o;
  
             o.vertex = UnityObjectToClipPos(v.vertex);
-            o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+            o.uv = v.uv;
             UNITY_TRANSFER_FOG(o,o.vertex);        
             // get world position of the vertex
             float3 worldPos = mul (unity_ObjectToWorld, v.vertex.xyz);  
@@ -92,8 +87,7 @@
            
          fixed4 frag (v2f i, fixed facing : VFACE) : SV_Target
          {
-           // sample the texture
-           fixed4 col = tex2D(_MainTex, i.uv) * _Tint;
+           fixed4 col = _Tint;
            // apply fog
            UNITY_APPLY_FOG(i.fogCoord, col);
            
@@ -113,7 +107,7 @@
            finalResult.rgb += RimResult;
  
            // color of backfaces/ top
-           float4 topColor = _TopColor * (foam + result);
+           float4 topColor = (foam + result);
            //VFACE returns positive for front facing, negative for backfacing
            return resultColored;
                
