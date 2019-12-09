@@ -5,7 +5,6 @@ using UnityEngine;
 public class SpillController : MonoBehaviour
 {
     public Transform parent;
-    public Transform spillPool;
     public ParticleSystem psPrefab;
     public int maxSpills;
     List<ParticleSystem> idleSpills;
